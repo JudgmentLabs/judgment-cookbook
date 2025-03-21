@@ -6,14 +6,15 @@ from typing_extensions import TypedDict
 from langgraph.graph import StateGraph, END
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
-from judgeval.common.tracer import Tracer, wrap, JudgevalCallbackHandler
+from judgeval.common.tracer import Tracer
+from judgeval.integrations.langgraph import JudgevalCallbackHandler, set_global_handler
 import os
 from judgeval.data import Example
 from judgeval.data.datasets import EvalDataset
 from judgeval.scorers import AnswerRelevancyScorer, ExecutionOrderScorer, AnswerCorrectnessScorer
 from judgeval import JudgmentClient
 
-PROJECT_NAME = "JNPR_MIST_LANGGRAPH"
+PROJECT_NAME = "LangGraphBasic"
 
 class State(TypedDict):
     messages: Annotated[List[BaseMessage], add_messages]
@@ -21,8 +22,7 @@ class State(TypedDict):
 
 judgment = Tracer(api_key=os.getenv("JUDGMENT_API_KEY"), project_name=PROJECT_NAME)
 
-
-@judgment.observe(name="search_restaurants", span_type="tool")
+# REPLACE THIS WITH YOUR OWN TOOLS
 def search_restaurants(location: str, cuisine: str, state: State) -> str:
     """Search for restaurants in a location with specific cuisine"""
     ans = f"Top 3 {cuisine} restaurants in {location}: 1. Le Gourmet 2. Spice Palace 3. Carbones"
@@ -34,7 +34,7 @@ def search_restaurants(location: str, cuisine: str, state: State) -> str:
     )
     return ans
 
-@judgment.observe(name="check_opening_hours", span_type="tool")
+# REPLACE THIS WITH YOUR OWN TOOLS
 def check_opening_hours(restaurant: str, state: State) -> str:
     """Check opening hours for a specific restaurant"""
     ans = f"{restaurant} hours: Mon-Sun 11AM-10PM"
@@ -47,7 +47,7 @@ def check_opening_hours(restaurant: str, state: State) -> str:
     )
     return ans
 
-@judgment.observe(name="get_menu_items", span_type="tool")
+# REPLACE THIS WITH YOUR OWN TOOLS
 def get_menu_items(restaurant: str) -> str:
     """Get popular menu items for a restaurant"""
     ans = f"{restaurant} popular dishes: 1. Chef's Special 2. Seafood Platter 3. Vegan Delight"
@@ -59,8 +59,7 @@ def get_menu_items(restaurant: str) -> str:
     )
     return ans 
 
-
-@judgment.observe(span_type="Run Agent", overwrite=True)
+# @judgment.observe(name="run_agent", span_type="Main Function")
 def run_agent(prompt: str):
     tools = [
         TavilySearchResults(max_results=2),
@@ -68,7 +67,6 @@ def run_agent(prompt: str):
         get_menu_items,
         search_restaurants,
     ]
-
 
     llm = ChatAnthropic(model="claude-3-5-sonnet-20240620")
 
@@ -93,39 +91,18 @@ def run_agent(prompt: str):
     
     graph = graph_builder.compile()
 
-    handler = JudgevalCallbackHandler(judgment.get_current_trace())
+    handler = JudgevalCallbackHandler(judgment)
+    set_global_handler(handler)
 
     result = graph.invoke({
         "messages": [HumanMessage(content=prompt)]
-    }, config=dict(callbacks=[handler]))
+    })
 
-    print("\nFinal Result:")
-    for msg in result["messages"]:
-        print(f"{type(msg).__name__}: {msg.content}")
-    
-    return handler
-    
-
-def test_eval_dataset():
-    dataset = EvalDataset()
-
-    # Helper to configure tests with YAML
-    dataset.add_from_yaml(os.path.join(os.path.dirname(__file__), "test.yaml"))
-    
-    for example in dataset.examples:
-        # Run your agent here
-        handler = run_agent(example.input)
-        example.actual_output = handler.executed_node_tools
-
-    client = JudgmentClient()
-    client.run_evaluation(
-        examples=dataset.examples,
-        scorers=[ExecutionOrderScorer(threshold=1, should_consider_ordering=True)],
-        model="gpt-4o-mini",
-        project_name=PROJECT_NAME,
-        eval_run_name="mist-demo-examples"
-    )
-
+    return result, handler
 
 if __name__ == "__main__":
-    test_eval_dataset()
+    result, handler = run_agent("Find me a good Italian restaurant in Manhattan. Check their opening hours and most popular dishes.")
+    # print(result)
+    
+    print("Executed Node-Tools:")
+    print(handler.executed_node_tools)
