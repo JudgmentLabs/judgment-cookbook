@@ -206,8 +206,8 @@ async def generate_response(state: AgentState) -> AgentState:
 
 async def main():
     with judgment.trace(
-        "JP_Morgan_Run_3",
-        project_name="JP_Morgan",
+        "run_1",
+        project_name="financial_agent",
         overwrite=True
     ) as trace:
 

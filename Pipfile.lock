@@ -1034,12 +1034,12 @@
         },
         "judgeval": {
             "hashes": [
-                "sha256:94aabfb250b554657d3b05d42831641823da20b651a30f19628cb2bd8ba7cbd9",
-                "sha256:ac773e8e245034ef197b17e542df25c5901b7e9bf69784355ea586bea42d0acf"
+                "sha256:4c9fad89751864386b7690f8cb4c3a67b7443684ae5882e52a6ec9ce001f2c77",
+                "sha256:b62c8aa3481b0d82cd8db45baaa985e786c898081ffbadcbf97cbbaa70a5c8b2"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.11'",
-            "version": "==0.0.20"
+            "version": "==0.0.21"
         },
         "kubernetes": {
             "hashes": [
