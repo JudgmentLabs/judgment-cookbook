@@ -150,7 +150,6 @@ async def create_travel_plan(destination, start_date, end_date, research_data):
     
     return response
 
-@judgment.observe(span_type="Main Function", overwrite=True)
 async def generate_itinerary(destination, start_date, end_date):
     """Main function to generate a travel itinerary."""
     research_data = await research_destination(destination, start_date, end_date)

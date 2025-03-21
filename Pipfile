@@ -5,7 +5,6 @@ name = "pypi"
 
 [packages]
 chromadb = "*"
-judgeval = "*"
 litellm = "*"
 python-dotenv = "==1.0.1"
 fastapi = "*"
@@ -28,6 +27,7 @@ langchain-core = "*"
 langgraph = "*"
 langchain-community = "*"
 tavily-python = "*"
+judgeval = "*"
 
 [dev-packages]
 
