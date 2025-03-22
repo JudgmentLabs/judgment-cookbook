@@ -113,7 +113,7 @@ def decision_node(state: ChatState) -> ChatState:
     state["node_decision"] = chosen_node
     print(f"DecisionNode: Chosen node: {chosen_node}, Refined query: {refined_query}")
 
-    judgment.get_current_trace().async_evaluate(
+    judgment.async_evaluate(
         scorers=[AnswerRelevancyScorer(threshold=0.5)],
         input=prompt,
         actual_output=content,
@@ -140,7 +140,7 @@ def anime_vector_node(state: ChatState) -> ChatState:
         state["retrieved_info"] = [f"Error retrieving from DB: {e}"]
     
 
-    judgment.get_current_trace().async_evaluate(
+    judgment.async_evaluate(
         scorers=[AnswerRelevancyScorer(threshold=0.5)],
         input=query,
         actual_output=state["retrieved_info"],
@@ -176,7 +176,7 @@ def anime_jikan_node(state: ChatState) -> ChatState:
     except Exception as e:
         state["retrieved_info"] = [f"Error fetching details for '{query}': {str(e)}"]
     
-    judgment.get_current_trace().async_evaluate(
+    judgment.async_evaluate(
         scorers=[AnswerRelevancyScorer(threshold=0.5)],
         input=query,
         actual_output=state["retrieved_info"],
@@ -206,7 +206,7 @@ def anime_web_node(state: ChatState) -> ChatState:
         else:
             state["retrieved_info"] = docs
         
-        judgment.get_current_trace().async_evaluate(
+        judgment.async_evaluate(
             scorers=[AnswerRelevancyScorer(threshold=0.5)],
             input=query,
             actual_output=state["retrieved_info"],
@@ -271,7 +271,7 @@ def finalize_answer_node(state: ChatState) -> ChatState:
         state["final_answer"] = f"Error generating final answer: {e}"
         state["retry_flag"] = True
 
-    judgment.get_current_trace().async_evaluate(
+    judgment.async_evaluate(
         scorers=[FaithfulnessScorer(threshold=0.5), AnswerRelevancyScorer(threshold=0.5)],
         input=prompt,
         actual_output=content,

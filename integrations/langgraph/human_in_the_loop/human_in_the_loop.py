@@ -26,7 +26,7 @@ judgment = Tracer(api_key=os.getenv("JUDGMENT_API_KEY"), project_name=PROJECT_NA
 def search_restaurants(location: str, cuisine: str, state: State) -> str:
     """Search for restaurants in a location with specific cuisine"""
     ans = f"Top 3 {cuisine} restaurants in {location}: 1. Le Gourmet 2. Spice Palace 3. Carbones"
-    judgment.get_current_trace().async_evaluate(
+    judgment.async_evaluate(
         scorers=[AnswerRelevancyScorer(threshold=1)],
         input="Search for restaurants in a location with specific cuisine",
         actual_output=ans,
@@ -38,7 +38,7 @@ def search_restaurants(location: str, cuisine: str, state: State) -> str:
 def check_opening_hours(restaurant: str, state: State) -> str:
     """Check opening hours for a specific restaurant"""
     ans = f"{restaurant} hours: Mon-Sun 11AM-10PM"
-    judgment.get_current_trace().async_evaluate(
+    judgment.async_evaluate(
         scorers=[AnswerCorrectnessScorer(threshold=1)],
         input="Check opening hours for a specific restaurant",
         actual_output=ans,
@@ -51,7 +51,7 @@ def check_opening_hours(restaurant: str, state: State) -> str:
 def get_menu_items(restaurant: str) -> str:
     """Get popular menu items for a restaurant"""
     ans = f"{restaurant} popular dishes: 1. Chef's Special 2. Seafood Platter 3. Vegan Delight"
-    judgment.get_current_trace().async_evaluate(
+    judgment.async_evaluate(
         scorers=[AnswerRelevancyScorer(threshold=1)],
         input="Get popular menu items for a restaurant",
         actual_output=ans,
