@@ -95,7 +95,7 @@ async def bad_classifier(state: AgentState) -> AgentState:
 async def bad_classify(state: AgentState) -> AgentState:
     category = await bad_classifier(state)
     
-    judgment.get_current_trace().async_evaluate(
+    judgment.async_evaluate(
         scorers=[AnswerCorrectnessScorer(threshold=1)],
         input=state["messages"][-1].content,
         actual_output=category["category"],
@@ -109,7 +109,7 @@ async def bad_classify(state: AgentState) -> AgentState:
 async def bad_sql_generator(state: AgentState) -> AgentState:
     ACTUAL_OUTPUT = "SELECT * FROM pnl WHERE stock_symbol = 'apppl'"
     
-    judgment.get_current_trace().async_evaluate(
+    judgment.async_evaluate(
         scorers=[AnswerCorrectnessScorer(threshold=1), FaithfulnessScorer(threshold=1)],
         input=state["messages"][-1].content,
         retrieval_context=state.get("documents", []),
@@ -148,7 +148,7 @@ async def classify(state: AgentState) -> AgentState:
         input=input_msg
     )
     
-    judgment.get_current_trace().async_evaluate(
+    judgment.async_evaluate(
         scorers=[AnswerCorrectnessScorer(threshold=1)],
         input=str(input_msg),
         actual_output=response.content,
@@ -181,7 +181,7 @@ async def generate_response(state: AgentState) -> AgentState:
             stock_symbol;
         """
     
-    judgment.get_current_trace().async_evaluate(
+    judgment.async_evaluate(
         scorers=[AnswerCorrectnessScorer(threshold=1), FaithfulnessScorer(threshold=1)],
         input=messages[-1].content,
         actual_output=OUTPUT,
