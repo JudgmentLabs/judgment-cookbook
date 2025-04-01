@@ -11,7 +11,7 @@ from judgeval.data import Example
 
 text2sql_scorer = ClassifierScorer(
     "Text to SQL",
-    slug="text2sql-487126418",
+    slug="text2sql-487126418",  # you can make this your own slug
     threshold=1.0,
     conversation=[{
         "role": "system",
@@ -136,7 +136,7 @@ JOIN Artists a ON t.artist_id = a.artist_id
 WHERE a.name = 'Drake'
 ORDER BY t.popularity DESC;
 """,
-        retrieval_context=[table_schema]
+        context=[table_schema]
     )
 
     most_listened_to_one_user_correct = Example(
@@ -149,7 +149,7 @@ GROUP BY t.track_id, t.title
 ORDER BY play_count DESC
 LIMIT 1;
 """,
-        retrieval_context=[table_schema]
+        context=[table_schema]
     )
 
     highest_num_playlists_correct = Example(
@@ -161,7 +161,7 @@ GROUP BY u.user_id, u.username
 ORDER BY total_playlists DESC
 LIMIT 5;
 """,
-        retrieval_context=[table_schema]
+        context=[table_schema]
     )
 
     most_popular_tracks_all_users_correct = Example(
@@ -173,9 +173,13 @@ GROUP BY t.track_id, t.title
 ORDER BY total_listens DESC
 LIMIT 10;
 """,
-        retrieval_context=[table_schema]
+        context=[table_schema]
     )
 
+    # This example is incorrect for multiple reasons:
+    # 1. Uses 'track_user' instead of 'track_id' which doesn't exist in the schema
+    # 2. References 'UserHistory' table instead of 'UserListeningHistory'
+    # 3. The JOIN condition uses incorrect column names
     most_popular_tracks_all_users_incorrect = Example(
         input="Find the 10 most popular tracks across all users.",
         actual_output="""SELECT t.track_user, t.title, COUNT(uh.history_id) AS total_listens
@@ -185,7 +189,7 @@ GROUP BY t.track_user, t.title
 ORDER BY total_listens DESC
 LIMIT 10;
 """,
-        retrieval_context=[table_schema]
+        context=[table_schema]
     )
 
 
