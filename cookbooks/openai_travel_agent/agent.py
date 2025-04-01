@@ -51,7 +51,7 @@ async def get_flights(destination):
         scorers=[AnswerRelevancyScorer(threshold=0.5)],
         input=prompt,
         actual_output=str(flights_search["results"]),
-        model="gpt-4",
+        model="gpt-4o",
     )
     return flights_search
 
@@ -64,7 +64,7 @@ async def get_weather(destination, start_date, end_date):
         scorers=[AnswerRelevancyScorer(threshold=0.5)],
         input=prompt,
         actual_output=str(weather_search["results"]),
-        model="gpt-4",
+        model="gpt-4o",
     )
     return weather_search
 
@@ -133,7 +133,7 @@ async def create_travel_plan(destination, start_date, end_date, research_data):
     """
     
     response = client.chat.completions.create(
-        model="gpt-4",
+        model="gpt-4o",
         messages=[
             {"role": "system", "content": "You are an expert travel planner. Combine both historical and current information to create the best possible itinerary."},
             {"role": "user", "content": prompt}
@@ -145,7 +145,7 @@ async def create_travel_plan(destination, start_date, end_date, research_data):
         input=prompt,
         actual_output=str(response),
         retrieval_context=[str(vector_db_context), str(research_data)],
-        model="gpt-4",
+        model="gpt-4o",
     )
     
     return response
