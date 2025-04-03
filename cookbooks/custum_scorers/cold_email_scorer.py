@@ -1,14 +1,17 @@
 from judgeval.scorers import JudgevalScorer
-from judgeval import Example, JudgmentClient
+from judgeval.data.example import Example
+from judgeval.judgment_client import JudgmentClient
 
 # Example input
 example = Example(
-    target_info={
-        "name": "Andy",
-        "company": "Datadog",
-        "role": "Senior Software Engineer",
-        "experience": ["Python", "AWS", "Kubernetes"],
-        "achievements": ["Led team of 5 engineers", "Reduced latency by 50%"]
+    additional_metadata={
+        "target_info": {
+            "name": "Andy",
+            "company": "Datadog",
+            "role": "Senior Software Engineer",
+            "experience": ["Python", "AWS", "Kubernetes"],
+            "achievements": ["Led team of 5 engineers", "Reduced latency by 50%"]
+        }
     },
     actual_output="""
     Hey Andy!
@@ -37,7 +40,7 @@ class ColdEmailInfoScorer(JudgevalScorer):
     def score_example(self, example):
         try:
             # Get target info and generated email from example
-            target_info = example.target_info
+            target_info = example.additional_metadata["target_info"]
             email = example.actual_output.lower()  # Convert to lowercase for case-insensitive matching
             
             # Define what information points to look for
@@ -87,7 +90,6 @@ class ColdEmailInfoScorer(JudgevalScorer):
     def __name__(self):
         return "Cold Email Information Usage Scorer"
 
-# Run the scorer
 if __name__ == "__main__":
     # Initialize the scorer
     cold_email_scorer = ColdEmailInfoScorer()
