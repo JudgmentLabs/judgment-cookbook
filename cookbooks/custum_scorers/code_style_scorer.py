@@ -1,5 +1,6 @@
 from judgeval.scorers import JudgevalScorer
-from judgeval import Example, JudgmentClient
+from judgeval.data.example import Example
+from judgeval.judgment_client import JudgmentClient
 
 # Example input
 example = Example(
@@ -123,7 +124,6 @@ class CodeStyleScorer(JudgevalScorer):
     def __name__(self):
         return "Code Style Compliance Scorer"
 
-# Run the scorer
 if __name__ == "__main__":
     # Initialize the scorer
     code_style_scorer = CodeStyleScorer()
