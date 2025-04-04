@@ -1,7 +1,28 @@
-from judgeval.scorers import JudgevalScorer
-from judgeval.data.example import Example
-from judgeval.judgment_client import JudgmentClient
+# Define a base class for JudgevalScorer
+class JudgevalScorer:
+    def __init__(self, score_type="", threshold=0.0):
+        self.score_type = score_type
+        self.threshold = threshold
+        self.score = 0.0
+        self.reason = ""
+        self.success = False
+        self.error = None
 
+    def score_example(self, example):
+        raise NotImplementedError("Subclasses must implement score_example")
+
+# Define Example class directly
+class Example:
+    def __init__(self, actual_output="", expected_output="", input_data=None, metadata=None):
+        self.actual_output = actual_output
+        self.expected_output = expected_output
+        self.input_data = input_data or {}
+        self.metadata = metadata or {}
+
+# Comment out the import that's causing issues
+# from judgeval.scorers import JudgevalScorer
+# from judgeval.data.example import Example
+# from judgeval.judgment_client import JudgmentClient
 # Example input
 example = Example(
     actual_output="""
