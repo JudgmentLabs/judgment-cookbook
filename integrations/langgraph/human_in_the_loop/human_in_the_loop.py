@@ -29,10 +29,13 @@ judgment = Tracer(api_key=os.getenv("JUDGMENT_API_KEY"), project_name=PROJECT_NA
 def search_restaurants(location: str, cuisine: str) -> str:
     """Search for restaurants in a location with specific cuisine"""
     ans = f"Top 3 {cuisine} restaurants in {location}: 1. Le Gourmet 2. Spice Palace 3. Carbones"
+    example = Example(
+        input="Search for restaurants in a location with specific cuisine",
+        actual_output=ans
+    )
     judgment.get_current_trace().async_evaluate(
         scorers=[AnswerRelevancyScorer(threshold=1)],
-        input="Search for restaurants in a location with specific cuisine",
-        actual_output=ans,
+        example=example,
         model="gpt-4o-mini"
     )
     return ans
