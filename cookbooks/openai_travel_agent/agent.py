@@ -147,12 +147,15 @@ async def create_travel_plan(destination, start_date, end_date, research_data):
         ]
     ).choices[0].message.content
 
-    judgment.async_evaluate(
-        scorers=[FaithfulnessScorer(threshold=0.5)],
+    example = Example(
         input=prompt,
         actual_output=str(response),
-        retrieval_context=[str(vector_db_context), str(research_data)],
-        model="gpt-4o",
+        retrieval_context=[str(vector_db_context), str(research_data)]
+    )
+    judgment.async_evaluate(
+        scorers=[FaithfulnessScorer(threshold=0.5)],
+        example=example,
+        model="gpt-4o"
     )
     
     return response

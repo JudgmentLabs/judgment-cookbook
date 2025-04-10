@@ -142,12 +142,14 @@ def anime_vector_node(state: ChatState) -> ChatState:
     except Exception as e:
         state["retrieved_info"] = [f"Error retrieving from DB: {e}"]
     
-
+    example = Example(
+        input=query,
+        actual_output=state["retrieved_info"]
+    )
     judgment.async_evaluate(
         scorers=[AnswerRelevancyScorer(threshold=0.5)],
-        input=query,
-        actual_output=state["retrieved_info"],
-        model="gpt-4",
+        example=example,
+        model="gpt-4"
     )
     return state
 
@@ -179,11 +181,14 @@ def anime_jikan_node(state: ChatState) -> ChatState:
     except Exception as e:
         state["retrieved_info"] = [f"Error fetching details for '{query}': {str(e)}"]
     
+    example = Example(
+        input=query,
+        actual_output=state["retrieved_info"]
+    )
     judgment.async_evaluate(
         scorers=[AnswerRelevancyScorer(threshold=0.5)],
-        input=query,
-        actual_output=state["retrieved_info"],
-        model="gpt-4",
+        example=example,
+        model="gpt-4"
     )
     return state
 
@@ -209,11 +214,14 @@ def anime_web_node(state: ChatState) -> ChatState:
         else:
             state["retrieved_info"] = docs
         
+        example = Example(
+            input=query,
+            actual_output=state["retrieved_info"]
+        )
         judgment.async_evaluate(
             scorers=[AnswerRelevancyScorer(threshold=0.5)],
-            input=query,
-            actual_output=state["retrieved_info"],
-            model="gpt-4",
+            example=example,
+            model="gpt-4"
         )
     except Exception as e:
         state["retrieved_info"] = [f"Error retrieving news: {e}"]
@@ -274,12 +282,15 @@ def finalize_answer_node(state: ChatState) -> ChatState:
         state["final_answer"] = f"Error generating final answer: {e}"
         state["retry_flag"] = True
 
-    judgment.async_evaluate(
-        scorers=[FaithfulnessScorer(threshold=0.5), AnswerRelevancyScorer(threshold=0.5)],
+    example = Example(
         input=prompt,
         actual_output=content,
-        retrieval_context=retrieved_info,
-        model="gpt-4",
+        retrieval_context=retrieved_info
+    )
+    judgment.async_evaluate(
+        scorers=[FaithfulnessScorer(threshold=0.5), AnswerRelevancyScorer(threshold=0.5)],
+        example=example,
+        model="gpt-4"
     )
 
     return state

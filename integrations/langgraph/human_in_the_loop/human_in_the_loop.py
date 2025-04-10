@@ -44,11 +44,14 @@ def search_restaurants(location: str, cuisine: str) -> str:
 def check_opening_hours(restaurant: str) -> str:
     """Check opening hours for a specific restaurant"""
     ans = f"{restaurant} hours: Mon-Sun 11AM-10PM"
-    judgment.get_current_trace().async_evaluate(
-        scorers=[AnswerCorrectnessScorer(threshold=1)],
+    example = Example(
         input="Check opening hours for a specific restaurant",
         actual_output=ans,
-        expected_output=ans,
+        expected_output=ans
+    )
+    judgment.get_current_trace().async_evaluate(
+        scorers=[AnswerCorrectnessScorer(threshold=1)],
+        example=example,
         model="gpt-4o-mini"
     )
     return ans
@@ -57,10 +60,13 @@ def check_opening_hours(restaurant: str) -> str:
 def get_menu_items(restaurant: str) -> str:
     """Get popular menu items for a restaurant"""
     ans = f"{restaurant} popular dishes: 1. Chef's Special 2. Seafood Platter 3. Vegan Delight"
+    example = Example(
+        input="Get popular menu items for a restaurant",
+        actual_output=ans
+    )
     judgment.get_current_trace().async_evaluate(
         scorers=[AnswerRelevancyScorer(threshold=1)],
-        input="Get popular menu items for a restaurant",
-        actual_output=ans,
+        example=example,
         model="gpt-4o-mini"
     )
     return ans 
