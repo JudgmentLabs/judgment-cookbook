@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 
 from judgeval.tracer import Tracer, wrap
 from judgeval.scorers import AnswerRelevancyScorer, FaithfulnessScorer
+from judgeval.data import Example
 
 # Initialize clients
 load_dotenv()
@@ -50,11 +51,14 @@ async def get_menu_highlights(restaurant_name: str) -> List[str]:
         ]
     )
 
+    example = Example(
+        input=prompt,
+        actual_output=response.choices[0].message.content
+    )
     judgment.async_evaluate(
         scorers=[AnswerRelevancyScorer(threshold=0.5)],
-        input=prompt,
-        actual_output=response.choices[0].message.content,
-        model="gpt-4",
+        example=example,
+        model="gpt-4"
     )
 
     return response.choices[0].message.content.split("\n")

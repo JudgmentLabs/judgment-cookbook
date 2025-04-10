@@ -113,11 +113,14 @@ def decision_node(state: ChatState) -> ChatState:
     state["node_decision"] = chosen_node
     print(f"DecisionNode: Chosen node: {chosen_node}, Refined query: {refined_query}")
 
+    example = Example(
+        input=prompt,
+        actual_output=content
+    )
     judgment.async_evaluate(
         scorers=[AnswerRelevancyScorer(threshold=0.5)],
-        input=prompt,
-        actual_output=content,
-        model="gpt-4",
+        example=example,
+        model="gpt-4"
     )
 
     return state

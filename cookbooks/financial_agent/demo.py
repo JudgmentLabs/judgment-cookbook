@@ -14,6 +14,7 @@ from langgraph.graph import StateGraph
 
 from judgeval.common.tracer import Tracer, JudgevalCallbackHandler
 from judgeval.scorers import AnswerCorrectnessScorer, FaithfulnessScorer
+from judgeval.data import Example
 
 
 
@@ -95,12 +96,15 @@ async def bad_classifier(state: AgentState) -> AgentState:
 async def bad_classify(state: AgentState) -> AgentState:
     category = await bad_classifier(state)
     
-    judgment.async_evaluate(
-        scorers=[AnswerCorrectnessScorer(threshold=1)],
+    example = Example(
         input=state["messages"][-1].content,
         actual_output=category["category"],
-        expected_output="pnl",
-        model="gpt-4o-mini"
+        expected_output="pnl"
+    )
+    judgment.async_evaluate(
+        scorers=[AnswerCorrectnessScorer(threshold=1)],
+        example=example,
+        model="gpt-4"
     )
     
     return {"messages": state["messages"], "category": category["category"]}
