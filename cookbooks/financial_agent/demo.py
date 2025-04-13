@@ -104,7 +104,7 @@ async def bad_classify(state: AgentState) -> AgentState:
     judgment.async_evaluate(
         scorers=[AnswerCorrectnessScorer(threshold=1)],
         example=example,
-        model="gpt-4"
+        model="gpt-4o-mini"
     )
     
     return {"messages": state["messages"], "category": category["category"]}
