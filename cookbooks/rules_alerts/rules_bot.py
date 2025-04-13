@@ -84,7 +84,7 @@ async def get_menu_highlights(restaurant_name: str) -> List[str]:
     judgment.async_evaluate(
         scorers=[AnswerRelevancyScorer(threshold=0.5)],
         example=example,
-        model="gpt-4"
+        model="gpt-4o-mini"
     )
 
     return response.choices[0].message.content.split("\n")
@@ -128,7 +128,7 @@ async def get_food_recommendations(cuisine: str) -> str:
     judgment.async_evaluate(
         scorers=[AnswerRelevancyScorer(threshold=0.5), FaithfulnessScorer(threshold=1.0)],
         example=example,
-        model="gpt-4"
+        model="gpt-4o-mini"
     )
     return recommendation
 
