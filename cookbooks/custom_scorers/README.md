@@ -41,17 +41,7 @@ You can customize these examples by:
 
 ## Running with Judgeval Platform
 
-To run these scorers with the Judgeval platform:
-
-1. Uncomment the platform integration code at the bottom of each file:
-   ```python
-   client = JudgmentClient()
-   results = client.run_evaluation(
-       examples=[example],
-       scorers=[scorer],
-       model="gpt-4"
-   )
-   ```
+To run these scorers with the Judgeval platform, simply execute the scripts. You'll be presented with a pop-up link to the pages.
 
 2. Make sure you have your API key and organization ID set up correctly.
 
@@ -62,6 +52,8 @@ If you encounter any issues:
 1. Make sure your Judgeval API key and organization ID are correctly set
 2. Check that you have the latest version of the Judgeval package
 3. Verify that your Python environment has all required dependencies
+
+If you have difficulty with following the setup, check out our quickstart guide [here](http://localhost:3000/getting_started)
 
 ## File Structure
 
