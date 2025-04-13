@@ -4,6 +4,7 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from judgeval.common.tracer import Tracer, wrap
 from judgeval.scorers import AnswerRelevancyScorer, FaithfulnessScorer, GroundednessScorer
+from judgeval.data import Example
 
 # Load environment variables
 load_dotenv()
@@ -120,14 +121,17 @@ async def generate_recommendations(preferences, search_results):
     recommendations = response.choices[0].message.content
     
     # Evaluate the recommendations
+    example = Example(
+        input=prompt,
+        actual_output=recommendations,
+        retrieval_context=[str(search_results)]
+    )
     judgment.get_current_trace().async_evaluate(
         scorers=[
             AnswerRelevancyScorer(threshold=1.0),
             GroundednessScorer(threshold=1.0)
         ],
-        input=prompt,
-        actual_output=recommendations,
-        retrieval_context=[str(search_results)],
+        example=example,
         model="gpt-4o"
     )
     
