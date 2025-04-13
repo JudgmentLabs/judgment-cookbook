@@ -14,6 +14,7 @@ from langgraph.graph import StateGraph
 
 from judgeval.common.tracer import Tracer, JudgevalCallbackHandler
 from judgeval.scorers import AnswerCorrectnessScorer, FaithfulnessScorer
+from judgeval.data import Example
 
 
 
@@ -95,11 +96,14 @@ async def bad_classifier(state: AgentState) -> AgentState:
 async def bad_classify(state: AgentState) -> AgentState:
     category = await bad_classifier(state)
     
-    judgment.async_evaluate(
-        scorers=[AnswerCorrectnessScorer(threshold=1)],
+    example = Example(
         input=state["messages"][-1].content,
         actual_output=category["category"],
-        expected_output="pnl",
+        expected_output="pnl"
+    )
+    judgment.async_evaluate(
+        scorers=[AnswerCorrectnessScorer(threshold=1)],
+        example=example,
         model="gpt-4o-mini"
     )
     
@@ -109,13 +113,11 @@ async def bad_classify(state: AgentState) -> AgentState:
 async def bad_sql_generator(state: AgentState) -> AgentState:
     ACTUAL_OUTPUT = "SELECT * FROM pnl WHERE stock_symbol = 'apppl'"
     
-    judgment.async_evaluate(
-        scorers=[AnswerCorrectnessScorer(threshold=1), FaithfulnessScorer(threshold=1)],
+    example = Example(
         input=state["messages"][-1].content,
-        retrieval_context=state.get("documents", []),
         actual_output=ACTUAL_OUTPUT,
-        expected_output=
-        """
+        retrieval_context=state.get("documents", []),
+        expected_output="""
         SELECT 
             SUM(CASE 
                 WHEN transaction_type = 'sell' THEN (price_per_share - (SELECT price_per_share FROM stock_transactions WHERE stock_symbol = 'aapl' AND transaction_type = 'buy' LIMIT 1)) * quantity 
@@ -125,7 +127,11 @@ async def bad_sql_generator(state: AgentState) -> AgentState:
             stock_transactions
         WHERE 
             stock_symbol = 'aapl';
-        """,
+        """
+    )
+    judgment.async_evaluate(
+        scorers=[AnswerCorrectnessScorer(threshold=1), FaithfulnessScorer(threshold=1)],
+        example=example,
         model="gpt-4o-mini"
     )
     return {"messages": state["messages"] + [ChatMessage(content=ACTUAL_OUTPUT, role="text2sql")]}
@@ -148,11 +154,14 @@ async def classify(state: AgentState) -> AgentState:
         input=input_msg
     )
     
-    judgment.async_evaluate(
-        scorers=[AnswerCorrectnessScorer(threshold=1)],
+    example = Example(
         input=str(input_msg),
         actual_output=response.content,
-        expected_output="pnl",
+        expected_output="pnl"
+    )
+    judgment.async_evaluate(
+        scorers=[AnswerCorrectnessScorer(threshold=1)],
+        example=example,
         model="gpt-4o-mini"
     )
 
@@ -181,8 +190,7 @@ async def generate_response(state: AgentState) -> AgentState:
             stock_symbol;
         """
     
-    judgment.async_evaluate(
-        scorers=[AnswerCorrectnessScorer(threshold=1), FaithfulnessScorer(threshold=1)],
+    example = Example(
         input=messages[-1].content,
         actual_output=OUTPUT,
         retrieval_context=documents,
@@ -198,7 +206,11 @@ async def generate_response(state: AgentState) -> AgentState:
             stock_symbol = 'aapl'
         GROUP BY 
             stock_symbol;
-        """,
+        """
+    )
+    judgment.async_evaluate(
+        scorers=[AnswerCorrectnessScorer(threshold=1), FaithfulnessScorer(threshold=1)],
+        example=example,
         model="gpt-4o-mini"
     )
 

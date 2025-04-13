@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 
 from judgeval.tracer import Tracer, wrap
 from judgeval.scorers import AnswerRelevancyScorer, FaithfulnessScorer
+from judgeval.data import Example
 
 # Initialize clients
 load_dotenv()
@@ -50,11 +51,14 @@ async def get_menu_highlights(restaurant_name: str) -> List[str]:
         ]
     )
 
+    example = Example(
+        input=prompt,
+        actual_output=response.choices[0].message.content
+    )
     judgment.async_evaluate(
         scorers=[AnswerRelevancyScorer(threshold=0.5)],
-        input=prompt,
-        actual_output=response.choices[0].message.content,
-        model="gpt-4",
+        example=example,
+        model="gpt-4o-mini"
     )
 
     return response.choices[0].message.content.split("\n")
@@ -90,12 +94,15 @@ async def get_food_recommendations(cuisine: str) -> str:
         
     # Generate final recommendation
     recommendation = await generate_recommendation(cuisine, restaurants, menu_items)
-    judgment.async_evaluate(
-        scorers=[AnswerRelevancyScorer(threshold=0.5), FaithfulnessScorer(threshold=1.0)],
+    example = Example(
         input=f"Create a recommendation for a restaurant and dishes based on the desired cuisine: {cuisine}",
         actual_output=recommendation,
-        retrieval_context=[str(restaurants), str(menu_items)],
-        model="gpt-4",
+        retrieval_context=[str(restaurants), str(menu_items)]
+    )
+    judgment.async_evaluate(
+        scorers=[AnswerRelevancyScorer(threshold=0.5), FaithfulnessScorer(threshold=1.0)],
+        example=example,
+        model="gpt-4o-mini"
     )
     return recommendation
 
