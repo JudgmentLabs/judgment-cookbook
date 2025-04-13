@@ -1,4 +1,17 @@
+"""
+The code in this file contains an implementation of a custom scorer checking for information usage in cold emails.
 
+The scorer checks if the generated email incorporates key information points about the target recipient:
+- Name
+- Company
+- Role
+- Experience
+- Achievements
+
+The score is calculated as the ratio of used information points to the total number of available points.
+For example, if 4 out of 5 information points are used, the score would be 0.8 (80%).
+The scorer is considered successful if the score meets or exceeds the threshold (default: 0.8 or 80%).
+"""
 
 from judgeval.scorers import JudgevalScorer
 from judgeval.data.example import Example
