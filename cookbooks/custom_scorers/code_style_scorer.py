@@ -1,44 +1,20 @@
-# Define a base class for JudgevalScorer
-class JudgevalScorer:
-    def __init__(self, score_type="", threshold=0.0):
-        self.score_type = score_type
-        self.threshold = threshold
-        self.score = 0.0
-        self.reason = ""
-        self.success = False
-        self.error = None
+"""
+The code in this file contains an implementation of a custom scorer checking for code style compliance.
 
-    def score_example(self, example):
-        raise NotImplementedError("Subclasses must implement score_example")
+The scorer checks for the following:
+- Function spacing
+- Docstring presence
+- Log format
 
-# Define Example class directly
-class Example:
-    def __init__(self, actual_output="", expected_output="", input_data=None, metadata=None):
-        self.actual_output = actual_output
-        self.expected_output = expected_output
-        self.input_data = input_data or {}
-        self.metadata = metadata or {}
+The score is calculated as the ratio of passed style rules to the total number of rules.
+For example, if 2 out of 3 rules pass, the score would be 0.67 (67%).
+The scorer is considered successful if the score meets or exceeds the threshold (default: 0.9 or 90%).
+"""
 
-# Comment out the import that's causing issues
-# from judgeval.scorers import JudgevalScorer
-# from judgeval.data.example import Example
-# from judgeval.judgment_client import JudgmentClient
-# Example input
-example = Example(
-    actual_output="""
-    def process_data(data):
-        # Missing docstring
-        result = []
-        for item in data:
-            log.info(f"Processing item: {item}")  # Incorrect log format
-            result.append(item * 2)
-        
-        def helper(x):  # Missing spacing between functions
-            return x + 1
-        
-        return result
-    """
-)
+from judgeval import JudgmentClient
+from judgeval.scorers import JudgevalScorer
+from judgeval.data import Example
+
 
 class CodeStyleScorer(JudgevalScorer):
     def __init__(
@@ -59,7 +35,45 @@ class CodeStyleScorer(JudgevalScorer):
             "log_format": "structured"  # Log format type
         }
 
-    def score_example(self, example):
+    def score_example(self, example: Example):
+        try:
+            code = example.actual_output
+            violations = []
+            passed_rules = 0
+            
+            # Check each style rule
+            if self._check_function_spacing(code):
+                passed_rules += 1
+            else:
+                violations.append("Function spacing does not match requirements")
+            
+            if self._check_docstrings(code):
+                passed_rules += 1
+            else:
+                violations.append("Missing required docstrings")
+            
+            if self._check_log_format(code):
+                passed_rules += 1
+            else:
+                violations.append("Log formatting does not match requirements")
+            
+            # Calculate score as ratio of passed rules to total rules
+            self.score = passed_rules / len(self.style_rules)
+            
+            # Generate reason for the score
+            if self.include_reason:
+                if not violations:
+                    self.reason = "Code follows all style guidelines."
+                else:
+                    self.reason = f"Style violations found: {', '.join(violations)}"
+            
+            self.success = self.score >= self.threshold
+            
+        except Exception as e:
+            self.error = str(e)
+            self.success = False
+
+    async def a_score_example(self, example: Example):
         try:
             code = example.actual_output
             violations = []
@@ -144,23 +158,35 @@ class CodeStyleScorer(JudgevalScorer):
     @property
     def __name__(self):
         return "Code Style Compliance Scorer"
+    
 
 if __name__ == "__main__":
-    # Initialize the scorer
     code_style_scorer = CodeStyleScorer()
+
+    example = Example(  # Missing docstring, incorrect log format, missing spacing between functions
+    actual_output="""
+    def process_data(data):
+        result = []
+        for item in data:
+            log.info(f"Processing item: {item}")
+            result.append(item * 2)
+        
+        def helper(x):
+            return x + 1
+        
+        return result
+    """
+)
     
-    # Score the example
-    code_style_scorer.score_example(example)
-    
-    # Print results
-    print(f"Score: {code_style_scorer.score}")
-    print(f"Reason: {code_style_scorer.reason}")
-    print(f"Success: {code_style_scorer.success}")
-    
-    # Optional: Run with Judgment platform
-    # client = JudgmentClient()
-    # results = client.run_evaluation(
-    #     examples=[example],
-    #     scorers=[code_style_scorer],
-    #     model="gpt-4"
-    # ) 
+    client = JudgmentClient()
+    results = client.run_evaluation(
+        examples=[example],
+        scorers=[code_style_scorer],
+        model="gpt-4o",
+        project_name="code_style_scorer",
+        eval_run_name="code_style_scorer_test",
+    ) 
+
+    # print(code_style_scorer)
+
+    print(results)

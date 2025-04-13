@@ -1,51 +1,9 @@
-# Define base classes to avoid circular imports
-class JudgevalScorer:
-    def __init__(self, score_type="", threshold=0.0):
-        self.score_type = score_type
-        self.threshold = threshold
-        self.score = 0.0
-        self.reason = ""
-        self.success = False
-        self.error = None
 
-    def score_example(self, example):
-        raise NotImplementedError("Subclasses must implement score_example")
 
-class Example:
-    def __init__(self, actual_output="", expected_output="", input_data=None, metadata=None, additional_metadata=None):
-        self.actual_output = actual_output
-        self.expected_output = expected_output
-        self.input_data = input_data or {}
-        self.metadata = metadata or {}
-        self.additional_metadata = additional_metadata or {}
+from judgeval.scorers import JudgevalScorer
+from judgeval.data.example import Example
+from judgeval.judgment_client import JudgmentClient
 
-# Comment out the problematic imports
-# from judgeval.scorers import JudgevalScorer
-# from judgeval.data.example import Example
-# from judgeval.judgment_client import JudgmentClient
-
-# Example input
-example = Example(
-    additional_metadata={
-        "target_info": {
-            "name": "Andy",
-            "company": "Datadog",
-            "role": "Senior Software Engineer",
-            "experience": ["Python", "AWS", "Kubernetes"],
-            "achievements": ["Led team of 5 engineers", "Reduced latency by 50%"]
-        }
-    },
-    actual_output="""
-    Hey Andy!
-    
-    I noticed your impressive work at Datadog as a Senior Software Engineer. 
-    Your experience with Python and AWS is exactly what we're looking for.
-    I'd love to connect and discuss an opportunity that aligns with your expertise.
-    
-    Best,
-    Sarah
-    """
-)
 
 class ColdEmailInfoScorer(JudgevalScorer):
     def __init__(
@@ -103,6 +61,50 @@ class ColdEmailInfoScorer(JudgevalScorer):
             self.error = str(e)
             self.success = False
 
+    async def a_score_example(self, example):
+        try:
+            # Get target info and generated email from example
+            target_info = example.additional_metadata["target_info"]
+            email = example.actual_output.lower()  # Convert to lowercase for case-insensitive matching
+            
+            # Define what information points to look for
+            info_points = {
+                "name": target_info.get("name", ""),
+                "company": target_info.get("company", ""),
+                "role": target_info.get("role", ""),
+                "experience": target_info.get("experience", []),
+                "achievements": target_info.get("achievements", [])
+            }
+            
+            # Count how many information points are used
+            used_points = []
+            for key, value in info_points.items():
+                if isinstance(value, list):
+                    # For lists (experience, achievements), check if any item is mentioned
+                    if any(item.lower() in email for item in value):
+                        used_points.append(key)
+                else:
+                    # For strings, check if the value is mentioned
+                    if value.lower() in email:
+                        used_points.append(key)
+            
+            # Calculate score as ratio of used points to total points
+            self.score = len(used_points) / len(info_points)
+            
+            # Generate reason for the score
+            if self.include_reason:
+                missing = set(info_points.keys()) - set(used_points)
+                if not missing:
+                    self.reason = "All key information points were utilized in the email."
+                else:
+                    self.reason = f"Missing information points: {', '.join(missing)}"
+            
+            self.success = self.score >= self.threshold
+            
+        except Exception as e:
+            self.error = str(e)
+            self.success = False
+
     def _success_check(self):
         if self.error is not None:
             return False
@@ -113,21 +115,35 @@ class ColdEmailInfoScorer(JudgevalScorer):
         return "Cold Email Information Usage Scorer"
 
 if __name__ == "__main__":
-    # Initialize the scorer
     cold_email_scorer = ColdEmailInfoScorer()
+
+    example = Example(
+    additional_metadata={
+        "target_info": {
+            "name": "Andy",
+            "company": "Datadog",
+            "role": "Senior Software Engineer",
+            "experience": ["Python", "AWS", "Kubernetes"],
+            "achievements": ["Led team of 5 engineers", "Reduced latency by 50%"]
+        }
+    },
+    actual_output="""
+    Hey Andy!
     
-    # Score the example
-    cold_email_scorer.score_example(example)
+    I noticed your impressive work at Datadog as a Senior Software Engineer. 
+    Your experience with Python and AWS is exactly what we're looking for.
+    I'd love to connect and discuss an opportunity that aligns with your expertise.
     
-    # Print results
-    print(f"Score: {cold_email_scorer.score}")
-    print(f"Reason: {cold_email_scorer.reason}")
-    print(f"Success: {cold_email_scorer.success}")
-    
-    # Optional: Run with Judgment platform
-    # client = JudgmentClient()
-    # results = client.run_evaluation(
-    #     examples=[example],
-    #     scorers=[cold_email_scorer],
-    #     model="gpt-4"
-    # ) 
+    Best,
+    Sarah
+    """
+)
+
+    client = JudgmentClient()
+    results = client.run_evaluation(
+        examples=[example],
+        scorers=[cold_email_scorer],
+        model="gpt-4o",
+        project_name="cold_email_scorer",
+        eval_run_name="cold_email_scorer_test",
+    ) 
