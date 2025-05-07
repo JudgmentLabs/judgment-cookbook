@@ -28,19 +28,23 @@ The cookbooks contained in this repo assume that you have a Judgment Labs accoun
 
 This repository provides a collection of cookbooks to demonstrate various evaluation techniques and agent implementations using Judgeval.
 
-### Agent Examples
+### LangGraph Agent Examples
 
-These cookbooks showcase how to build and evaluate different types of AI agents:
+These cookbooks showcase agents built using the LangGraph framework, demonstrating complex state management and chained operations.
 
-*   **`financial_agent/`**: An agent designed for financial queries, demonstrating evaluation of its responses and data retrieval accuracy.
-*   **`food_suggestion/`**: A simple agent that provides food recommendations, evaluated for relevancy and correctness.
-*   **`langgraph_agent/`**: Contains examples of agents built with LangGraph, including:
-    *   `basic/`: A foundational LangGraph agent setup.
-    *   `human_in_the_loop/`: Demonstrates incorporating human feedback and intervention within a LangGraph agent.
-*   **`movie_recommendation_agent/`**: An agent for recommending movies, focusing on evaluating the quality and relevance of suggestions.
-*   **`music_suggestion/`**: An agent that provides music recommendations, with evaluations for suggestion accuracy.
-*   **`openai_travel_agent/`**: A travel planning agent built using OpenAI models, evaluated for its ability to generate useful travel itineraries and information.
+*   **`langgraph_agent/`**: Core examples of LangGraph agent patterns:
+    *   `basic/`: A foundational LangGraph agent setup illustrating tool use and conditional edges.
+    *   `human_in_the_loop/`: Demonstrates incorporating human feedback and intervention within a LangGraph agent flow.
+*   **`financial_agent/`**: A LangGraph-based agent for financial queries, featuring RAG capabilities with a vector database for contextual data retrieval and evaluation of its reasoning and data accuracy.
 
+### Direct API Agent Examples
+
+These cookbooks feature agents that interact directly with LLM APIs (e.g., OpenAI, Anthropic), often implementing custom logic for tool use, function calling, and RAG.
+
+*   **`openai_travel_agent/`**: A travel planning agent using direct OpenAI API calls, custom tool functions, and RAG with a vector database for up-to-date and contextual travel information. Evaluated for itinerary quality and information relevance.
+*   **`food_suggestion/`**: (Located in `cookbooks/food_recommendation/`) A simple agent providing food recommendations via direct OpenAI API calls and custom search/recommendation logic. Evaluated for relevancy and correctness.
+*   **`movie_recommendation_agent/`**: An agent for recommending movies. (Assumed Direct API / RAG - *details WIP*). Focuses on evaluating suggestion quality and relevance.
+*   **`music_suggestion/`**: An agent that provides music recommendations. (Assumed Direct API / RAG - *details WIP*). Evaluated for suggestion accuracy.
 ### Scoring & Evaluation Examples
 
 These cookbooks focus on specific scoring mechanisms and evaluation patterns:
