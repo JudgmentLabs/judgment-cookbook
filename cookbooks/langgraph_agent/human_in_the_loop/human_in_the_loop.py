@@ -1,12 +1,13 @@
 from typing import Annotated, List
-from langchain_anthropic import ChatAnthropic
+from langchain_openai import ChatOpenAI
 from langchain_community.tools.tavily_search import TavilySearchResults
 from langchain_core.messages import BaseMessage, HumanMessage
 from typing_extensions import TypedDict
 from langgraph.graph import StateGraph, END
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
-from judgeval.common.tracer import Tracer, wrap, JudgevalCallbackHandler
+from judgeval.common.tracer import Tracer, wrap
+from judgeval.integrations.langgraph import JudgevalCallbackHandler
 import os
 from judgeval.data import Example
 from judgeval.data.datasets import EvalDataset
@@ -36,7 +37,7 @@ def search_restaurants(location: str, cuisine: str) -> str:
     judgment.get_current_trace().async_evaluate(
         scorers=[AnswerRelevancyScorer(threshold=1)],
         example=example,
-        model="gpt-4o-mini"
+        model="gpt-4.1"
     )
     return ans
 
@@ -52,7 +53,7 @@ def check_opening_hours(restaurant: str) -> str:
     judgment.get_current_trace().async_evaluate(
         scorers=[AnswerCorrectnessScorer(threshold=1)],
         example=example,
-        model="gpt-4o-mini"
+        model="gpt-4.1"
     )
     return ans
 
@@ -67,7 +68,7 @@ def get_menu_items(restaurant: str) -> str:
     judgment.get_current_trace().async_evaluate(
         scorers=[AnswerRelevancyScorer(threshold=1)],
         example=example,
-        model="gpt-4o-mini"
+        model="gpt-4.1"
     )
     return ans 
 
@@ -104,7 +105,7 @@ def run_agent(prompt: str, follow_up_inputs: dict):
     ]
 
 
-    llm = ChatAnthropic(model="claude-3-5-sonnet-20240620")
+    llm = ChatOpenAI(model="gpt-4.1")
     llm_with_tools = llm.bind_tools(tools + [ask_human])
 
     graph_builder = StateGraph(State)
@@ -132,7 +133,7 @@ def run_agent(prompt: str, follow_up_inputs: dict):
         checkpointer=checkpointer
     )
 
-    handler = JudgevalCallbackHandler(judgment.get_current_trace())
+    handler = JudgevalCallbackHandler(judgment)
     config = {"configurable": {"thread_id": "001"}, "callbacks": [handler]}
 
     for event in graph.stream(
@@ -161,6 +162,7 @@ def run_agent(prompt: str, follow_up_inputs: dict):
     return handler
     
 
+@judgment.observe(name="Test Evaluation Dataset Loop", overwrite=True)
 def test_eval_dataset():
     dataset = EvalDataset()
 
@@ -168,15 +170,21 @@ def test_eval_dataset():
     dataset.add_from_yaml(os.path.join(os.path.dirname(__file__), "test.yaml"))
     
     for example in dataset.examples:
-        # Run your agent here
-        handler = run_agent(example.input, example.follow_up_inputs)
-        example.actual_output = handler.executed_node_tools
+        print(f"Running agent for input: {example.input}")
+        # Define follow-up inputs based on potential interrupt nodes
+        follow_up_inputs = {"wait": "Manhattan", "ask_human": "Manhattan"}
+        try:
+            handler = run_agent(example.input, follow_up_inputs)
+            print("Executed Node-Tools:", handler.executed_node_tools if handler else "N/A")
+            example.actual_output = handler.executed_node_tools
+        except Exception as e:
+            print(f"Error running agent: {e}")
 
     client = JudgmentClient()
     client.run_evaluation(
         examples=dataset.examples,
         scorers=[ExecutionOrderScorer(threshold=1, should_consider_ordering=True)],
-        model="gpt-4o-mini",
+        model="gpt-4.1",
         project_name=PROJECT_NAME,
         eval_run_name="mist-demo-examples",
         override=True
