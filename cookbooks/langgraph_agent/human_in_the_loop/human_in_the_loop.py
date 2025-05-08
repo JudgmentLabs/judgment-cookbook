@@ -179,6 +179,8 @@ def test_eval_dataset():
             example.actual_output = handler.executed_node_tools
         except Exception as e:
             print(f"Error running agent: {e}")
+            logging.exception(f"Error running agent for input '{example.input}': {e}") # Suggestion: Log the full exception
+            raise # Suggestion: Re-raise the exception to prevent masking it
 
     client = JudgmentClient()
     client.run_evaluation(
