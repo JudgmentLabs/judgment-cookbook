@@ -5,36 +5,25 @@ from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_anthropic import ChatAnthropic
 from langchain_core.messages import HumanMessage
-# from openai import OpenAI # Keep commented if not used
 
-# from openai import AzureOpenAI, AsyncAzureOpenAI # Keep commented for now
+from judgeval.common.tracer import Tracer
+from judgeval.integrations.langgraph import JudgevalCallbackHandler
 
-from judgeval.common.tracer import Tracer, JudgmentTraceCallbackHandler # Import the new handler
-
-# Load environment variables from .env file
 load_dotenv()
+tracer = Tracer(project_name="client_wrap_test")
 
-# Initialize the Tracer (make sure JUDGMENT_API_KEY and JUDGMENT_ORG_ID are set in your environment)
-# Ensure JUDGMENT_ORG_ID is set if not passed explicitly
-tracer = Tracer(project_name="client_wrap_test", api_key=os.getenv("JUDGMENT_API_KEY"), organization_id=os.getenv("JUDGMENT_ORG_ID"))
-
-# Instantiate the callback handler
-judgment_callback = JudgmentTraceCallbackHandler()
-
-# Wrap the clients - REMOVED wrap() as callbacks handle tracing now
-# Ensure API keys are set in your environment variables
+judgment_callback = JudgevalCallbackHandler(tracer)
 chatOpenAIclient = ChatOpenAI(
     api_key=os.getenv("OPENAI_API_KEY"),
-    model="gpt-4o",
-    callbacks=[judgment_callback] # Add the handler
+    model="gpt-4.1",
+    callbacks=[judgment_callback]
 )
 chatAnthropicclient = ChatAnthropic(
     api_key=os.getenv("ANTHROPIC_API_KEY"),
     model="claude-3-haiku-20240307",
-    callbacks=[judgment_callback] # Add the handler
+    callbacks=[judgment_callback]
 )
 
-# Define a more complex message
 complex_prompt = """
 Write a detailed tutorial (around 2000 words) explaining the concept of 
 asynchronous programming in Python. Cover the following topics clearly:
