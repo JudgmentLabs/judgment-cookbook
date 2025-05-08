@@ -1,5 +1,5 @@
 from typing import Annotated, List
-from langchain_anthropic import ChatAnthropic
+from langchain_openai import ChatOpenAI
 from langchain_community.tools.tavily_search import TavilySearchResults
 from langchain_core.messages import BaseMessage, HumanMessage
 from typing_extensions import TypedDict
@@ -7,19 +7,21 @@ from langgraph.graph import StateGraph, END
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
 from judgeval.common.tracer import Tracer
-from judgeval.integrations.langgraph import JudgevalCallbackHandler, set_global_handler
+from judgeval.integrations.langgraph import JudgevalCallbackHandler
 import os
+from dotenv import load_dotenv
 from judgeval.scorers import AnswerRelevancyScorer, ExecutionOrderScorer, AnswerCorrectnessScorer
 from judgeval import JudgmentClient
 from judgeval.data import Example
+
+load_dotenv()
 
 PROJECT_NAME = "LangGraphBasic"
 
 class State(TypedDict):
     messages: Annotated[List[BaseMessage], add_messages]
 
-
-judgment = Tracer(api_key=os.getenv("JUDGMENT_API_KEY"), project_name=PROJECT_NAME)
+judgment = Tracer(project_name=PROJECT_NAME)
 
 # REPLACE THIS WITH YOUR OWN TOOLS
 def search_restaurants(location: str, cuisine: str, state: State) -> str:
@@ -32,7 +34,7 @@ def search_restaurants(location: str, cuisine: str, state: State) -> str:
     judgment.async_evaluate(
         scorers=[AnswerRelevancyScorer(threshold=1)],
         example=example,
-        model="gpt-4o-mini"
+        model="gpt-4.1"
     )
     return ans
 
@@ -48,7 +50,7 @@ def check_opening_hours(restaurant: str, state: State) -> str:
     judgment.async_evaluate(
         scorers=[AnswerCorrectnessScorer(threshold=1)],
         example=example,
-        model="gpt-4o-mini"
+        model="gpt-4.1"
     )
     return ans
 
@@ -63,7 +65,7 @@ def get_menu_items(restaurant: str) -> str:
     judgment.async_evaluate(
         scorers=[AnswerRelevancyScorer(threshold=1)],
         example=example,
-        model="gpt-4o-mini"
+        model="gpt-4.1"
     )
     return ans 
 
@@ -76,7 +78,7 @@ def run_agent(prompt: str):
         search_restaurants,
     ]
 
-    llm = ChatAnthropic(model="claude-3-5-sonnet-20240620")
+    llm = ChatOpenAI(model="gpt-4.1")
 
     graph_builder = StateGraph(State)
 
@@ -100,11 +102,10 @@ def run_agent(prompt: str):
     graph = graph_builder.compile()
 
     handler = JudgevalCallbackHandler(judgment)
-    set_global_handler(handler)
 
     result = graph.invoke({
         "messages": [HumanMessage(content=prompt)]
-    })
+    }, config=dict(callbacks=[handler]))
 
     return result, handler
 
