@@ -1,0 +1,14 @@
+examples:
+  - input:
+      prompt: "Find me a good Italian restaurant in Manhattan. Check their opening hours and most popular dishes."
+    expected_tools:
+      - tool_name: "search_restaurants"
+        parameters:
+          location: "Manhattan"
+          cuisine: "Italian"
+      - tool_name: "check_opening_hours"
+        parameters:
+          restaurant: "Le Gourmet"
+      - tool_name: "get_menu_items"
+        parameters:
+          restaurant: "Le Gourmet"

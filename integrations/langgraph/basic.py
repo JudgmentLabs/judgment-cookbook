@@ -13,6 +13,7 @@ from dotenv import load_dotenv
 from judgeval.scorers import AnswerRelevancyScorer, ExecutionOrderScorer, AnswerCorrectnessScorer
 from judgeval import JudgmentClient
 from judgeval.data import Example
+from judgeval.scorers import ToolOrderScorer
 
 load_dotenv()
 
@@ -21,37 +22,20 @@ PROJECT_NAME = "LangGraphBasic"
 class State(TypedDict):
     messages: Annotated[List[BaseMessage], add_messages]
 
-judgment = Tracer(project_name=PROJECT_NAME)
 
+judgment = Tracer(api_key=os.getenv("JUDGMENT_API_KEY"), project_name=PROJECT_NAME)
+handler = JudgevalCallbackHandler(judgment)
+client = JudgmentClient()
 # REPLACE THIS WITH YOUR OWN TOOLS
-def search_restaurants(location: str, cuisine: str, state: State) -> str:
+def search_restaurants(location: str, cuisine: str) -> str:
     """Search for restaurants in a location with specific cuisine"""
     ans = f"Top 3 {cuisine} restaurants in {location}: 1. Le Gourmet 2. Spice Palace 3. Carbones"
-    example = Example(
-        input="Search for restaurants in a location with specific cuisine",
-        actual_output=ans
-    )
-    judgment.async_evaluate(
-        scorers=[AnswerRelevancyScorer(threshold=1)],
-        example=example,
-        model="gpt-4.1"
-    )
     return ans
 
 # REPLACE THIS WITH YOUR OWN TOOLS
-def check_opening_hours(restaurant: str, state: State) -> str:
+def check_opening_hours(restaurant: str) -> str:
     """Check opening hours for a specific restaurant"""
     ans = f"{restaurant} hours: Mon-Sun 11AM-10PM"
-    example = Example(
-        input="Check opening hours for a specific restaurant",
-        actual_output=ans,
-        expected_output=ans
-    )
-    judgment.async_evaluate(
-        scorers=[AnswerCorrectnessScorer(threshold=1)],
-        example=example,
-        model="gpt-4.1"
-    )
     return ans
 
 # REPLACE THIS WITH YOUR OWN TOOLS
@@ -69,7 +53,6 @@ def get_menu_items(restaurant: str) -> str:
     )
     return ans 
 
-# @judgment.observe(name="run_agent", span_type="Main Function")
 def run_agent(prompt: str):
     tools = [
         TavilySearchResults(max_results=2),
@@ -101,17 +84,22 @@ def run_agent(prompt: str):
     
     graph = graph_builder.compile()
 
-    handler = JudgevalCallbackHandler(judgment)
+    config_with_callbacks = {"callbacks": [handler]}
 
     result = graph.invoke({
         "messages": [HumanMessage(content=prompt)]
-    }, config=dict(callbacks=[handler]))
+    }, config_with_callbacks)
 
     return result, handler
 
 if __name__ == "__main__":
-    result, handler = run_agent("Find me a good Italian restaurant in Manhattan. Check their opening hours and most popular dishes.")
-    # print(result)
-    
-    print("Executed Node-Tools:")
-    print(handler.executed_node_tools)
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    yaml_path = os.path.join(current_dir, "test.yaml")
+
+    client.assert_test(
+        test_file=yaml_path,
+        scorers=[ToolOrderScorer()],
+        function=run_agent,
+        tracer=handler,
+        override=True
+    )
