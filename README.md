@@ -1,7 +1,9 @@
-### judgment-cookbook
+# judgment-cookbook
 
 This repo contains cookbooks demonstrating evaluations of AI Agents using the `judgeval` package implemented by [Judgment Labs](https://judgmentlabs.ai/).
 
+
+## Prerequisites
 Before running these examples, make sure you have:
 
 1. Installed the Judgeval package:
@@ -9,20 +11,14 @@ Before running these examples, make sure you have:
    pip install judgeval
    ```
 
-2a. Set up your Judgeval API key and organization ID as environment variables:
+2. Set up your Judgeval API key and organization ID as environment variables:
    ```bash
    export JUDGMENT_API_KEY="your_api_key"
    export JUDGMENT_ORG_ID="your_org_id"
    ```
 
-2b. Alternatively, set up a .env file with your API key and organization ID included
-   ```bash
-   JUDGMENT_API_KEY="your_api_key"
-   JUDGMENT_ORG_ID="your_org_id"
-   ```
-   Finally, run source .env to update the environment file. 
+To get your API key and Organization ID, make an account on the [Judgment Labs platform](https://app.judgmentlabs.ai/login).
 
-The cookbooks contained in this repo assume that you have a Judgment Labs account. If you don't have an account, sign up for one [here](https://app.judgmentlabs.ai/login).
 
 ## Cookbooks Overview
 This repository provides a collection of cookbooks to demonstrate various evaluation techniques and agent implementations using Judgeval.
