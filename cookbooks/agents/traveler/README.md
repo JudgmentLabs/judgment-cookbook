@@ -4,7 +4,7 @@ A basic travel agent that can process natural language requests and call various
 
 A good example of this is emulating what a travel company would do to build their own agent (e.g. Expedia, Airbnb, Booking.com, etc.).
 
-Here, we are simulating this by using the Amadeus API to act as some of our tools.
+Here, we are simulating this by using the [Amadeus API](https://developers.amadeus.com/) to act as some of our tools. Once you have your Amadeus access set up, run the script `utils.py` to load your keys.
 
 ## Running the Agent
 
@@ -14,6 +14,12 @@ Here, we are simulating this by using the Amadeus API to act as some of our tool
    ```
    python cli.py
    ```
+
+## judgeval integration points
+
+1. `agent.py`: The central `process_request()` function is decorated using the tracer and has an `async_evaluate` to trigger an [online evaluation](https://docs.judgmentlabs.ai/performance/online_evals). The `wrap()` decorator is also used to capture the LLM calls.
+
+2. `tools.py`: Each tool is decorated with `@judgment.observe`.
 
 ## Current features and tools built into the agent
 
