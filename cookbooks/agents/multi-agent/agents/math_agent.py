@@ -1,9 +1,6 @@
-import json
 from subagent import AgentBase, ToolsMixin
 from tools import MathToolsMixin
-from judgeval.scorers import FaithfulnessScorer
-from judgeval.data import Example
-from tools.common import judgment, client
+from tools.common import judgment
 
 SYSTEM_PROMPT = '''
 You are a mathematical problem-solving agent. Your job is to solve mathematical problems and word problems using the following tools:
@@ -62,7 +59,7 @@ class MathAgent(ToolsMixin, MathToolsMixin, AgentBase):
         except Exception as e:
             return f"Error executing {function_name}: {str(e)}"
     
-    @judgment.observe(span_type="agent")
+    @judgment.observe(span_type="function")
     def process_request(self, math_problem):
         messages = [
             {"role": "system", "content": SYSTEM_PROMPT},

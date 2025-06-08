@@ -3,7 +3,7 @@ from subagent import AgentBase, ToolsMixin
 from tools import ResearchToolsMixin
 from judgeval.scorers import FaithfulnessScorer
 from judgeval.data import Example
-from tools.common import judgment, client
+from tools.common import judgment
 
 SYSTEM_PROMPT = '''
 You are a research agent specialized in gathering and analyzing information. Your job is to research topics thoroughly using the following tools:
@@ -116,6 +116,8 @@ class ResearchAgent(ToolsMixin, ResearchToolsMixin, AgentBase):
             return str(result)
         except Exception as e:
             return f"Error executing {function_name}: {str(e)}"
+        
+    @judgment.observe(span_type="function")
     def process_request(self, research_query):
         print(f"\n[RESEARCH AGENT] Starting research on: {research_query[:100]}...")
         

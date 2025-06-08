@@ -3,7 +3,7 @@ from subagent import AgentBase, ToolsMixin
 from tools import ReportToolsMixin
 from judgeval.scorers import FaithfulnessScorer
 from judgeval.data import Example
-from tools.common import judgment, client
+from tools.common import judgment
 
 SYSTEM_PROMPT = '''
 You are a report generation agent specialized in creating structured documents and summaries. Your job is to format information into professional reports using the following tools:
@@ -66,6 +66,7 @@ class ReportAgent(ToolsMixin, ReportToolsMixin, AgentBase):
         except Exception as e:
             return f"Error executing {function_name}: {str(e)}"
 
+    @judgment.observe(span_type="agent")
     def process_request(self, report_request):
         messages = [
             {"role": "system", "content": SYSTEM_PROMPT},
