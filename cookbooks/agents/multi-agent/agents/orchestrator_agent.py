@@ -39,7 +39,7 @@ Your workflow:
 
 You can manage multiple research agents simultaneously for parallel work.
 
-Format your tool calls as:
+You must format your output as tool calls with this exact format, you cannot use <break_down_query>, <delegate_research>, <get_research_results>, <delegate_math>, <delegate_report>, or <synthesize_results> tags, must use the following format:
 <tool>
 {"name": "tool_name", "args": {"parameter": "value"}}
 </tool>
