@@ -25,7 +25,7 @@ Use these tools to create professional reports:
 2. Use create_executive_summary for high-level overviews
 3. Use generate_charts_description for data visualizations
 
-Format your tool calls as:
+You must format your output as tool calls with this exact format, you cannot use <format_report>, <create_executive_summary>, or <generate_charts_description> tags, must use the following format:
 <tool>
 {"name": "tool_name", "args": {"parameter": "value"}}
 </tool>

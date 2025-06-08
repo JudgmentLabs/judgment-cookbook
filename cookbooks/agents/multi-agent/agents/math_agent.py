@@ -19,7 +19,7 @@ You MUST use these tools in sequence for every problem:
 2. Use format to convert the equation to executable code  
 3. Use calculate to get the final numerical answer
 
-Format your tool calls as:
+You must format your output as tool calls with this exact format, you cannot use <formalize>, <format>, or <calculate> tags, must use the following format:
 <tool>
 {"name": "tool_name", "args": {"parameter": "value"}}
 </tool>
@@ -84,7 +84,7 @@ class MathAgent(ToolsMixin, MathToolsMixin, AgentBase):
             
             # Check for tool call
             tool_name, tool_args = self._parse_tool_call(content)
-            
+
             if tool_name:
                 # Execute the tool
                 print(f"[MATH] Tool call: {tool_name}({tool_args})")
