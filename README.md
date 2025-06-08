@@ -34,10 +34,7 @@ These cookbooks feature agents that interact directly with LLM APIs (e.g., OpenA
 
 These cookbooks showcase agents built using the LangGraph framework, demonstrating complex state management and chained operations.
 
-*   **`langgraph_agent/`**: Core examples of LangGraph agent patterns:
-    *   `basic/`: A foundational LangGraph agent setup illustrating tool use and conditional edges.
-    *   `human_in_the_loop/`: Demonstrates incorporating human feedback and intervention within a LangGraph agent flow.
-*   **`financial_agent/`**: A LangGraph-based agent for financial queries, featuring RAG capabilities with a vector database for contextual data retrieval and evaluation of its reasoning and data accuracy.
+*   **`langggraph_music_recommender/`**: An agent that generates song recommendations based on user music taste.
    
 ### Writing Custom Scorers
 
