@@ -1,0 +1,274 @@
+[
+  {
+    "type": "function",
+    "name": "get_flights",
+    "description": "Get flights between two airports",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "origin": {
+          "type": "string",
+          "description": "Origin airport code e.g. SFO"
+        },
+        "destination": {
+          "type": "string",
+          "description": "Destination airport code e.g. LAX"
+        },
+        "departure_date": {
+          "type": "string",
+          "description": "Departure date must be in the format YYYY-MM-DD e.g. 2025-05-01"
+        },
+        "return_date": {
+          "type": "string",
+          "description": "Return date must be in the format YYYY-MM-DD e.g. 2025-05-10 (optional)"
+        },
+        "passengers": {
+          "type": "number",
+          "description": "Number of passengers"
+        },
+        "budget": {
+          "type": "number",
+          "description": "Maximum price the user is willing to pay"
+        },
+        "non_stop": {
+          "type": "boolean",
+          "description": "Whether the user wants non-stop flights only"
+        }
+      },
+      "required": ["origin", "destination", "departure_date", "non_stop"],
+      "additionalProperties": false
+    }
+  },
+  {
+    "type": "function",
+    "name": "get_hotels",
+    "description": "Get hotels in a given location",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "location": {
+          "type": "string",
+          "description": "Destination city code or airport code. IATA table codes (3 chars IATA Code). e.g. SFO, NYC, LAX"
+        },
+        "radius": {
+          "type": "number",
+          "description": "Radius in miles from the center of the city e.g. 5"
+        },
+        "amenities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of amenities. Available values : Available values : SWIMMING_POOL, SPA, FITNESS_CENTER, AIR_CONDITIONING, RESTAURANT, PARKING, PETS_ALLOWED, AIRPORT_SHUTTLE, BUSINESS_CENTER, DISABLED_FACILITIES, WIFI, MEETING_ROOMS, NO_KID_ALLOWED, TENNIS, GOLF, KITCHEN, ANIMAL_WATCHING, BABY-SITTING, BEACH, CASINO, JACUZZI, SAUNA, SOLARIUM, MASSAGE, VALET_PARKING, BAR or LOUNGE, KIDS_WELCOME, NO_PORN_FILMS, MINIBAR, TELEVISION, WI-FI_IN_ROOM, ROOM_SERVICE, GUARDED_PARKG, SERV_SPEC_MENU"
+        },
+        "ratings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Hotel stars. Up to four values can be requested at the same time in a comma separated list. Available values : 1, 2, 3, 4, 5. Each value in the array will be used as a filter to the search."
+        },
+        "checkin_date": {
+          "type": "string",
+          "description": "Checkin date must be in the format YYYY-MM-DD e.g. 2025-05-01 (optional)"
+        },
+        "checkout_date": {
+          "type": "string",
+          "description": "Checkout date must be in the format YYYY-MM-DD e.g. 2025-05-10 (optional)"
+        }
+      },
+      "required": ["location"],
+      "additionalProperties": false
+    }
+  },
+  {
+    "type": "function",
+    "name": "get_car_rentals",
+    "description": "Get car rentals in a given location",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "location": {
+          "type": "string",
+          "description": "Location e.g. San Francisco, CA"
+        },
+        "pickup_date": {
+          "type": "string",
+          "description": "Pickup date e.g. 2024-05-01"
+        },
+        "dropoff_date": {
+          "type": "string",
+          "description": "Dropoff date e.g. 2024-05-10"
+        }
+      },
+      "required": ["location", "pickup_date", "dropoff_date"],
+      "additionalProperties": false
+    }
+  },
+  {
+    "type": "function",
+    "name": "add_memory",
+    "description": "Adds one or more pieces of information to the memory as key-value pairs.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "memories": {
+          "type": "object",
+          "description": "A dictionary where keys are the unique labels and values are the messages to be stored.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["memories"],
+      "additionalProperties": false
+    }
+  },
+  {
+    "type": "function",
+    "name": "get_memory",
+    "description": "Retrieves a specific piece of information from memory using its label.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "The unique identifier or key of the memory item to retrieve."
+        }
+      },
+      "required": ["label"],
+      "additionalProperties": false
+    }
+  },
+  {
+    "type": "function",
+    "name": "get_all_memory",
+    "description": "Retrieves all items currently stored in memory.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "type": "function",
+    "name": "update_memory",
+    "description": "Updates an existing piece of information in memory.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "The unique identifier or key of the memory item to update."
+        },
+        "message": {
+          "type": "string",
+          "description": "The new information or content to store."
+        }
+      },
+      "required": ["label", "message"],
+      "additionalProperties": false
+    }
+  },
+  {
+    "type": "function",
+    "name": "research",
+    "description": "Perform general purpose research on a given topic using web search.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "The research question or topic."
+        }
+      },
+      "required": ["query"],
+      "additionalProperties": false
+    }
+  },
+  {
+    "type": "function",
+    "name": "web_search",
+    "description": "Search the web for real-time information about any topic using the Tavily search engine. Use this when you need up-to-date information or current facts.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "search_term": {
+          "type": "string",
+          "description": "The search query to pass to the Tavily search engine."
+        }
+      },
+      "required": ["search_term"],
+      "additionalProperties": false
+    }
+  },
+  {
+    "type": "function",
+    "name": "news_search",
+    "description": "Search for recent news articles on a specific topic using NewsAPI. Use this when you need the latest news coverage on a subject.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "topic": {
+          "type": "string",
+          "description": "The news topic to search for"
+        },
+        "days": {
+          "type": "integer",
+          "description": "Number of days to look back (default: 7)"
+        }
+      },
+      "required": ["topic"],
+      "additionalProperties": false
+    }
+  },
+  {
+    "type": "function",
+    "name": "formalize",
+    "description": "Convert a math word problem into a math equation.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "problem": {
+          "type": "string",
+          "description": "The math word problem."
+        }
+      },
+      "required": ["problem"],
+      "additionalProperties": false
+    }
+  },
+  {
+    "type": "function",
+    "name": "format",
+    "description": "Convert a math equation into simpleeval-runnable code.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "equation": {
+          "type": "string",
+          "description": "The math equation as a string."
+        }
+      },
+      "required": ["equation"],
+      "additionalProperties": false
+    }
+  },
+  {
+    "type": "function",
+    "name": "calculate",
+    "description": "Evaluate simpleeval code and return the answer.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "The code to evaluate."
+        }
+      },
+      "required": ["code"],
+      "additionalProperties": false
+    }
+  }
+]
