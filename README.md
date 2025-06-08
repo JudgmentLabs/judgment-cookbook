@@ -46,9 +46,4 @@ These cookbooks feature agents that interact directly with LLM APIs (e.g., OpenA
 
 These cookbooks focus on how to implement and use custom scorers:
 
-*   **`classifier_scorer/`**: Illustrates evaluating various classification and subjective evaluation tasks, such as:
-    *   `branding.py`: Scoring for brand guideline adherence.
-    *   `competitor_mentions.py`: Identifying and scoring mentions of competitors.
-    *   `pii_checker.py`: Detecting and evaluating Personal Identifiable Information (PII) handling.
-    *   `text2sql.py`: Evaluating the correctness of text-to-SQL generation.
 *   **`custom_scorers/`**: Provides examples of how to implement and use custom scorers to tailor evaluations to specific needs beyond built-in scorers.
