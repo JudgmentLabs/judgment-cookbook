@@ -10,7 +10,9 @@ Here, we are simulating this by using the [Amadeus API](https://developers.amade
 
 1. Copy the `.env.example` file to `.env` and add your own API keys
 
-2. Run the CLI interface:
+2. Run the script `utils.py`
+
+3. Run the CLI interface:
    ```
    python cli.py
    ```
