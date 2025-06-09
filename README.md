@@ -34,7 +34,7 @@ These cookbooks feature agents that interact directly with LLM APIs (e.g., OpenA
 
 These cookbooks showcase agents built using the LangGraph framework, demonstrating complex state management and chained operations.
 
-*   **`langggraph_music_recommender/`**: An agent that generates song recommendations based on user music taste.
+*   **`langgraph_music_recommender/`**: An agent that generates song recommendations based on user music taste.
    
 ### Writing Custom Scorers
 
