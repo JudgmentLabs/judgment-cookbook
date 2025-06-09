@@ -28,8 +28,14 @@ langgraph = "*"
 langchain-community = "*"
 tavily-python = "*"
 judgeval = "*"
+simpleeval = "*"
+pydantic-ai = "*"
+devtools = "*"
+logfire = {extras = ["httpx"], version = "*"}
+matplotlib = "*"
+langchain-together = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.12"
+python_version = "3.11"
