@@ -27,7 +27,7 @@ langchain-core = "*"
 langgraph = "*"
 langchain-community = "*"
 tavily-python = "*"
-judgeval = {file = "../judgeval", editable = true}
+judgeval = "*"
 simpleeval = "*"
 pydantic-ai = "*"
 devtools = "*"
