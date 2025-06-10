@@ -26,8 +26,6 @@ This repository provides a collection of cookbooks to demonstrate various evalua
 ### Handrolled API Agent Examples
 
 These cookbooks feature agents that interact directly with LLM APIs (e.g., OpenAI, Anthropic), often implementing custom logic for tool use, function calling, and RAG.
-
-*   **`traveler/`**: A travel planning agent using OpenAI API calls, custom tool functions, and the Amadeus API for up-to-date and contextual travel information. Evaluated on factual adherence to retrieval context.
 *   **`multi-agent/`**: A flexible multi-agent framework for orchestrating and evaluating the collaboration of multiple agents and tools on complex tasks like financial analysis. Evaluated on factual adherence to retrieval context.
 
 ### LangGraph Agent Examples
