@@ -17,7 +17,7 @@ load_dotenv()
 
 client = JudgmentClient()
 tavily_client = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
-chat_model = ChatOpenAI(model="gpt-4", temperature=0)
+chat_model = ChatOpenAI(model="gpt-4.1", temperature=0)
 
 judgment = Tracer(
     api_key=os.getenv("JUDGMENT_API_KEY"),
@@ -177,19 +177,9 @@ def generate_recommendations(state: State) -> State:
     """
     user_message = HumanMessage(content=user_prompt)
 
-    # Use the LangChain ChatOpenAI instance with ainvoke
     response = chat_model.invoke([system_message, user_message])
     recommendations = response.content
     state["recommendations"] = recommendations
-
-    # --- Prepare and Add Evaluation to State using the new helper ---
-    # add_evaluation_to_state(
-    #     state=state, # Pass the current state dictionary
-    #     scorers=[AnswerRelevancyScorer(threshold=0.5)],
-    #     input=user_prompt,
-    #     actual_output=recommendations,
-    #     model="gpt-4"
-    # )
 
     judgment.async_evaluate(
         input=user_prompt,
@@ -197,7 +187,6 @@ def generate_recommendations(state: State) -> State:
         scorers=[AnswerRelevancyScorer(threshold=0.5)],
         model="gpt-4o"
     )
-    # --- End Evaluation Setup ---
 
     return state
 
@@ -241,11 +230,9 @@ def music_recommendation_bot(handler: JudgevalCallbackHandler, query: str):
     print("I'll ask you a few questions to understand your music taste, then suggest some songs you might enjoy.")
     print("\nRunning with predefined answers for testing...\n")
     
-    # Initialize state with predefined answers
     initial_state = initialize_state()
     
     try:
-        # Run the entire workflow with graph.ainvoke (asynchronous)
         # Pass handler directly in config
         # The handler instance needs to be accessible inside the node later
         config_with_callbacks = {"callbacks": [handler]}
@@ -263,7 +250,6 @@ if __name__ == "__main__":
     handler = JudgevalCallbackHandler(judgment) 
     # music_recommendation_bot(handler)  uncomment to run without the test (if you just want tracing)
     
-    # This sets us up for running the unit test
     example = Example(
         input={"handler": handler, "query": "Taylor Swift"},
         expected_tools=[
