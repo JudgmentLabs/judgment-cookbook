@@ -3,7 +3,7 @@
 A flexible multi-agent framework for orchestrating and evaluating the collaboration of multiple agents and tools on complex tasks.
 
 ## Running the Multi-Agent System
-1. Set up your environment variables as needed (see .env.example).
+1. Set up your environment variables as needed (see `.env.example`).
 2. Run `main.py`.
 
 ## judgeval integration points

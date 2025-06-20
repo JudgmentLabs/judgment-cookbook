@@ -4,9 +4,10 @@ A basic LangGraph agent that generates music recommendations based on user taste
 
 Uses the TavilySearch API to perform web searching over artist music.
 
-## Running the agent
+## Running the Music Agent
+1. Obtain a `TAVILY_API_KEY` and remaining environmental variables as in `.env.example`
+2. Run `music_agent.py`.
 
-The agent is configured in `music_agent.py` to run, along with triggering a unit test on its tool-calling order (expected to fail).
 
 If you want to run the agent without the evaluation, uncomment the section in the `if __name__ == "__main__":` section.
 
