@@ -261,7 +261,7 @@ def music_recommendation_bot(handler: JudgevalCallbackHandler, query: str):
 
 if __name__ == "__main__":
     handler = JudgevalCallbackHandler(judgment) 
-    # music_recommendation_bot(handler)  uncomment to run without the test (if you just want tracing)
+    # music_recommendation_bot(handler, "Taylor Swift")  uncomment to run without the test (if you just want tracing)
     
     # This sets us up for running the unit test
     example = Example(
