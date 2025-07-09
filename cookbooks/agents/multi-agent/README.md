@@ -19,7 +19,7 @@ For advanced observability and tracing features:
 pip install judgeval
 ```
 
-📖 **Learn more**: [Judgment Labs Documentation](https://docs.judgmentlabs.ai/quickstarts)
+📖 **Learn more**: [Judgment Labs Documentation](https://docs.judgmentlabs.ai/documentation)
 
 ### Set API Keys
 ```bash
