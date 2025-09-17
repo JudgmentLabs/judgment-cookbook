@@ -1,1 +1,76 @@
-.env 
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Packages
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg-info/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+.env/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Environments
+*.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Pytest cache
+.cache
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Pycharm
+.idea/
+
+# VSCode settings
+.vscode/
+
+# MacOS
+.DS_Store
+
+# SQLite database files
+*.sqlite3
+
+# Logs and databases
+*.log
+*.db
+*.sqlite
