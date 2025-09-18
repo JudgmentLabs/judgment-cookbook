@@ -17,15 +17,16 @@ from judgeval.scorers.example_scorer import ExampleScorer
 from judgeval.data import Example
 from datasets import load_dataset
 from human_eval.execution import check_correctness
-from openai import OpenAI
+from openai import AsyncOpenAI
 from typing import Dict, Any
+import asyncio
 
 # Initialize clients
 judgment = JudgmentClient()
-client = OpenAI()
+client = AsyncOpenAI()
 
 
-def generate_code_with_gpt(problem: Dict[str, Any], model_client) -> str:
+async def generate_code_with_gpt(problem: Dict[str, Any]) -> str:
     """
     Generate code using GPT for a given HumanEval problem.
     
@@ -38,23 +39,16 @@ def generate_code_with_gpt(problem: Dict[str, Any], model_client) -> str:
     """
     prompt = problem["prompt"]
     
-    response = model_client.chat.completions.create(
-        model="gpt-4.1-mini",
+    response = await client.chat.completions.create(
+        model="gpt-4",
         messages=[
-            {"role": "system", "content": "You are an expert Python programmer. Write a function that solves the given problem."},
+            {"role": "system", "content": "You are an expert Python programmer. Write ONLY the Python function code that solves the given problem. Do not include any markdown formatting, explanations, or code blocks. Return only the raw Python code."},
             {"role": "user", "content": prompt}
         ],
-        temperature=0.1,
         max_tokens=512
     )
     
     generated_code = response.choices[0].message.content
-    
-    # Extract just the function code (remove markdown if present)
-    if "```python" in generated_code:
-        generated_code = generated_code.split("```python")[1].split("```")[0].strip()
-    elif "```" in generated_code:
-        generated_code = generated_code.split("```")[1].split("```")[0].strip()
     
     return generated_code
 
@@ -111,7 +105,7 @@ class HumanEvalCodeExecutionScorer(ExampleScorer):
         return self.score
 
 
-if __name__ == "__main__":
+async def main():
     print("🚀 Starting HumanEval Code Execution Evaluation")
     
     # Step 1: Load dataset
@@ -119,16 +113,21 @@ if __name__ == "__main__":
     dataset = load_dataset("openai/openai_humaneval")
     print(f"   Found {len(dataset['test'])} problems")
     
-    # Step 2: Generate code for first 1 problem (for demo)
+    # Step 2: Generate code for first 5 problems (for demo)
     print("\n🤖 Generating code with GPT...")
+    problems = list(dataset["test"].select(range(164)))
+    
+    # Generate all code in parallel
+    generated_codes = await asyncio.gather(*[
+        generate_code_with_gpt(problem) 
+        for problem in problems
+    ])
+    
+    # Create examples
     examples = []
-    for i, problem in enumerate(dataset["test"].select(range(1))):
-        print(f"   Problem {i+1}/1: {problem['task_id']}")
+    for i, (problem, generated_code) in enumerate(zip(problems, generated_codes)):
+        print(f"   Problem {i+1}/5: {problem['task_id']}")
         
-        # Generate code
-        generated_code = generate_code_with_gpt(problem, client)
-        
-        # Create example
         example = Example(
             task_id=problem["task_id"],
             prompt=problem["prompt"],
@@ -138,14 +137,19 @@ if __name__ == "__main__":
             generated_code=generated_code
         )
         examples.append(example)
-    
+
     # Step 3: Create judgeval project and dataset
     print("\n📝 Creating judgeval project...")
     dataset = Dataset.create(
         name="humaneval-dataset", 
         project_name="humaneval-project", 
-        examples=examples, 
+        examples=examples,
         overwrite=True
+    )
+
+    dataset = Dataset.get(
+        name="humaneval-dataset",
+        project_name="humaneval-project"
     )
 
     # Step 4: Run evaluation
@@ -157,6 +161,10 @@ if __name__ == "__main__":
     )
     
     print("\n✅ Evaluation complete! Check your judgeval dashboard for results.")
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
 
 
 
