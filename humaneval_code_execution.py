@@ -111,45 +111,52 @@ class HumanEvalCodeExecutionScorer(ExampleScorer):
         return self.score
 
 
-dataset = load_dataset("openai/openai_humaneval")
-
-examples = []
-for i, problem in enumerate(dataset["test"].select(range(5))):
-    print(f"   Problem {i+1}/5: {problem['task_id']}")
+if __name__ == "__main__":
+    print("🚀 Starting HumanEval Code Execution Evaluation")
     
-    # Generate code
-    generated_code = generate_code_with_gpt(problem, client)
+    # Step 1: Load dataset
+    print("\n📊 Loading HumanEval dataset...")
+    dataset = load_dataset("openai/openai_humaneval")
+    print(f"   Found {len(dataset['test'])} problems")
     
-    # Create example
-    example = Example(
-        task_id=problem["task_id"],
-        prompt=problem["prompt"],
-        canonical_solution=problem["canonical_solution"],
-        test=problem["test"],
-        entry_point=problem["entry_point"],
-        generated_code=generated_code
+    # Step 2: Generate code for first 1 problem (for demo)
+    print("\n🤖 Generating code with GPT...")
+    examples = []
+    for i, problem in enumerate(dataset["test"].select(range(1))):
+        print(f"   Problem {i+1}/1: {problem['task_id']}")
+        
+        # Generate code
+        generated_code = generate_code_with_gpt(problem, client)
+        
+        # Create example
+        example = Example(
+            task_id=problem["task_id"],
+            prompt=problem["prompt"],
+            canonical_solution=problem["canonical_solution"],
+            test=problem["test"],
+            entry_point=problem["entry_point"],
+            generated_code=generated_code
+        )
+        examples.append(example)
+    
+    # Step 3: Create judgeval project and dataset
+    print("\n📝 Creating judgeval project...")
+    dataset = Dataset.create(
+        name="humaneval-dataset", 
+        project_name="humaneval-project", 
+        examples=examples, 
+        overwrite=True
     )
-    examples.append(example)
 
-# Step 3: Create judgeval project and dataset
-print("\n📝 Creating judgeval project...")
-Dataset.create(
-    name="humaneval-dataset", 
-    project_name="humaneval-project", 
-    examples=examples, 
-    overwrite=True
-)
-
-# Step 4: Run evaluation
-print("\n⚡ Running evaluation...")
-judgment.run_evaluation(
-    examples=examples,
-    scorers=[HumanEvalCodeExecutionScorer()],
-    project_name="humaneval-project",
+    # Step 4: Run evaluation
+    print("\n⚡ Running evaluation...")
+    judgment.run_evaluation(
+        examples=dataset.examples,
+        scorers=[HumanEvalCodeExecutionScorer()],
+        project_name="humaneval-project"
+    )
     
-)
-
-print("\n✅ Evaluation complete! Check your judgeval dashboard for results.")
+    print("\n✅ Evaluation complete! Check your judgeval dashboard for results.")
 
 
 
