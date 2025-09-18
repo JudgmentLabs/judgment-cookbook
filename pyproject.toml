@@ -5,6 +5,9 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "datasets>=4.1.1",
+    "human-eval>=1.0.3",
+    "ipykernel>=6.30.1",
     "judgeval>=0.11.0",
     "openai>=1.107.3",
 ]

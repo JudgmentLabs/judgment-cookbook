@@ -26,17 +26,8 @@ judgment = JudgmentClient()
 client = AsyncOpenAI()
 
 
-async def generate_code_with_gpt(problem: Dict[str, Any]) -> str:
-    """
-    Generate code using GPT for a given HumanEval problem.
-    
-    Args:
-        problem: HumanEval problem dict with 'prompt' key
-        model_client: OpenAI client
-    
-    Returns:
-        Generated code string
-    """
+async def generate_code(problem: Dict[str, Any]) -> str:
+    """Generate code using LLM for a given HumanEval problem."""
     prompt = problem["prompt"]
     
     response = await client.chat.completions.create(
@@ -51,7 +42,6 @@ async def generate_code_with_gpt(problem: Dict[str, Any]) -> str:
     generated_code = response.choices[0].message.content
     
     return generated_code
-
 
 
 class HumanEvalCodeExecutionScorer(ExampleScorer):
@@ -114,12 +104,12 @@ async def main():
     print(f"   Found {len(dataset['test'])} problems")
     
     # Step 2: Generate code for first 5 problems (for demo)
-    print("\n🤖 Generating code with GPT...")
+    print("\n🤖 Generating code...")
     problems = list(dataset["test"].select(range(164)))
     
     # Generate all code in parallel
     generated_codes = await asyncio.gather(*[
-        generate_code_with_gpt(problem) 
+        generate_code(problem) 
         for problem in problems
     ])
     
