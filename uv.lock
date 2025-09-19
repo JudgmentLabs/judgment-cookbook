@@ -826,6 +826,7 @@ dependencies = [
     { name = "human-eval" },
     { name = "ipykernel" },
     { name = "judgeval" },
+    { name = "numpy" },
     { name = "openai" },
 ]
 
@@ -835,6 +836,7 @@ requires-dist = [
     { name = "human-eval", specifier = ">=1.0.3" },
     { name = "ipykernel", specifier = ">=6.30.1" },
     { name = "judgeval", specifier = ">=0.11.0" },
+    { name = "numpy", specifier = ">=2.3.3" },
     { name = "openai", specifier = ">=1.107.3" },
 ]
 
