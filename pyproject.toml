@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "chromadb>=1.1.0",
     "datasets>=4.1.1",
     "fireworks-ai>=0.19.19",
     "human-eval>=1.0.3",
