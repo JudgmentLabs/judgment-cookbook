@@ -11,6 +11,7 @@ dependencies = [
     "human-eval>=1.0.3",
     "ipykernel>=6.30.1",
     "judgeval>=0.11.0",
+    "jupyter>=1.1.1",
     "numpy>=2.3.3",
     "openai>=1.107.3",
     "requests>=2.32.5",
