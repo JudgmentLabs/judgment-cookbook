@@ -19,3 +19,11 @@ Before running these examples, make sure you have:
    ```
 
 To get your API key and Organization ID, make an account on the [Judgment Labs platform](https://app.judgmentlabs.ai/login).
+
+## 📚 Cookbooks
+
+| Try Out | Notebook | Description |
+|:---------|:-----|:------------|
+| Custom Scorers | [HumanEval](https://colab.research.google.com/github/JudgmentLabs/judgment-cookbook/blob/main/HumanEval_Custom_Scorer.ipynb) | Build custom evaluators for your agents |
+| Online Monitoring | [Research Agent](https://colab.research.google.com/github/JudgmentLabs/judgment-cookbook/blob/main/Research_Agent_Online_Monitoring.ipynb) | Monitor agent behavior in production |
+| RL | [Wikipedia Racer](https://colab.research.google.com/github/JudgmentLabs/judgment-cookbook/blob/main/Wiki_Racer_RL.ipynb) | Train agents with reinforcement learning |
