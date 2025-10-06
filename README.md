@@ -24,6 +24,9 @@ To get your API key and Organization ID, make an account on the [Judgment Labs p
 
 | Try Out | Notebook | Description |
 |:---------|:-----|:------------|
-| Custom Scorers | [HumanEval](https://colab.research.google.com/github/JudgmentLabs/judgment-cookbook/blob/main/custom_scorers/HumanEval_Custom_Scorer.ipynb) | Build custom evaluators for your agents |
-| Online Monitoring | [Research Agent](https://colab.research.google.com/github/JudgmentLabs/judgment-cookbook/blob/main/monitoring/Research_Agent_Online_Monitoring.ipynb) | Monitor agent behavior in production |
 | RL | [Wikipedia Racer](https://colab.research.google.com/github/JudgmentLabs/judgment-cookbook/blob/main/rl/WikiRacingAgent_RL.ipynb) | Train agents with reinforcement learning |
+| Online Monitoring | [Research Agent](https://colab.research.google.com/github/JudgmentLabs/judgment-cookbook/blob/main/monitoring/Research_Agent_Online_Monitoring.ipynb) | Monitor agent behavior in production |
+| Custom Scorers | [HumanEval](https://colab.research.google.com/github/JudgmentLabs/judgment-cookbook/blob/main/custom_scorers/HumanEval_Custom_Scorer.ipynb) | Build custom evaluators for your agents |
+| Offline Testing | [Get Started For Free] | Compare how different prompts, models, or agent configs affect performance across ANY metric |
+
+You can find a list of [video tutorials for Judgeval use cases](https://www.youtube.com/@Alexshander-JL).
