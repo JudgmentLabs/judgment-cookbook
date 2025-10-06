@@ -1,9 +1,0 @@
-__pycache__/
-**/__pycache__/
-*.env
-.env
-
-*.lock
-**/.DS_Store
-**/memory_db
-**/reports

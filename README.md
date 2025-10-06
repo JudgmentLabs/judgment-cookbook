@@ -2,16 +2,17 @@
 
 This repo contains cookbooks demonstrating evaluations of AI Agents using the `judgeval` package implemented by [Judgment Labs](https://judgmentlabs.ai/).
 
-
 ## Prerequisites
+
 Before running these examples, make sure you have:
 
 1. Installed the latest version of the Judgeval package:
+
    ```bash
    pip install judgeval
    ```
-
 2. Set up your Judgeval API key and organization ID as environment variables:
+
    ```bash
    export JUDGMENT_API_KEY="your_api_key"
    export JUDGMENT_ORG_ID="your_org_id"
@@ -19,23 +20,10 @@ Before running these examples, make sure you have:
 
 To get your API key and Organization ID, make an account on the [Judgment Labs platform](https://app.judgmentlabs.ai/login).
 
+## 📚 Cookbooks
 
-## Cookbooks Overview
-This repository provides a collection of cookbooks to demonstrate various evaluation techniques and agent implementations using Judgeval.
-
-### Handrolled API Agent Examples
-
-These cookbooks feature agents that interact directly with LLM APIs (e.g., OpenAI, Anthropic), often implementing custom logic for tool use, function calling, and RAG.
-*   **`multi-agent/`**: A flexible multi-agent framework for orchestrating and evaluating the collaboration of multiple agents and tools on complex tasks like financial analysis. Evaluated on factual adherence to retrieval context.
-
-### LangGraph Agent Examples
-
-These cookbooks showcase agents built using the LangGraph framework, demonstrating complex state management and chained operations.
-
-*   **`langgraph_music_recommender/`**: An agent that generates song recommendations based on user music taste.
-   
-### Writing Custom Scorers
-
-These cookbooks focus on how to implement and use custom scorers:
-
-*   **`custom_scorers/`**: Provides examples of how to implement and use custom scorers to tailor evaluations to specific needs beyond built-in scorers.
+| Try Out | Notebook | Description |
+|:---------|:-----|:------------|
+| Custom Scorers | [HumanEval](https://colab.research.google.com/github/JudgmentLabs/judgment-cookbook/blob/main/custom_scorers/HumanEval_Custom_Scorer.ipynb) | Build custom evaluators for your agents |
+| Online Monitoring | [Research Agent](https://colab.research.google.com/github/JudgmentLabs/judgment-cookbook/blob/main/monitoring/Report_Agent_Online_Monitoring.ipynb) | Monitor agent behavior in production |
+| RL | [Wikipedia Racer](https://colab.research.google.com/github/JudgmentLabs/judgment-cookbook/blob/main/rl/WikiRacingAgent_RL.ipynb) | Train agents with reinforcement learning |
